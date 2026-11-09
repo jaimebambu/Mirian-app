@@ -289,7 +289,9 @@ pre.sum{white-space:pre-wrap;font:400 14px/1.45 var(--body);background:var(--fie
 .inst .done{margin-top:auto;padding:14px;border-radius:14px;background:var(--green-soft);color:var(--ink);font-weight:600;text-align:center}
 
 /* cabecera blanca a todo el ancho */
-.hdr{margin-top:-20px;padding-top:20px;background:#fff;display:flex;flex-direction:column;gap:18px;box-shadow:0 0 0 100vmax #fff,0 1px 0 100vmax #1116140F;clip-path:inset(0 -100vmax -1px -100vmax)}
+.hdr{position:relative;margin-top:-20px;padding-top:20px;background:#fff;display:flex;flex-direction:column;gap:18px;box-shadow:0 0 0 100vmax #fff;clip-path:inset(0 -100vmax)}
+.hdr::after{content:'';position:absolute;left:-100vmax;right:-100vmax;bottom:0;height:1px;background:var(--line)}
+.hdr .tabs{border-bottom:0}.hdr .tab{margin-bottom:0;position:relative;z-index:1}
 .hdr.g{padding-bottom:14px}
 /* nota de ejercicio en el registro */
 .logl.open{border-bottom:0}
