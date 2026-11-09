@@ -25,7 +25,7 @@
 /* Sistema aprobado en el lienzo (Cobalto v5): una sola apariencia clara, azul cobalto solo para estado y escala de esfuerzo */
 :root{
   color-scheme: light;
-  --bg:#FBFBFB; --card:#FFFFFF; --ink:#111614; --ink2:#11161499; --ink3:#111614B3; --grey:#5e6763;
+  --bg:#F3F4F3; --card:#FFFFFF; --ink:#111614; --ink2:#11161499; --ink3:#111614B3; --grey:#5e6763;
   --line:#1116141A; --field:#1116140D;
   --blue:#1F5FB8; --blue-soft:#E4EDFA; --blue-mid:#9DB9E3; --green:#2C8550; --green-soft:#E2F1E7; --green-mid:#9CCBAE;
   --cond:"Barlow Condensed","Arial Narrow",system-ui,sans-serif; --body:Barlow,system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -287,8 +287,24 @@ pre.sum{white-space:pre-wrap;font:400 14px/1.45 var(--body);background:var(--fie
 .inst .hint{margin-top:8px;font-size:13px;color:var(--ink2);text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap}
 @media (max-height:700px){.inst .ill{height:200px}.inst .grid{transform:scale(.75)}}
 .inst .done{margin-top:auto;padding:14px;border-radius:14px;background:var(--green-soft);color:var(--ink);font-weight:600;text-align:center}
+
+/* cabecera blanca a todo el ancho */
+.hdr{margin-top:-20px;padding-top:20px;background:#fff;display:flex;flex-direction:column;gap:18px;box-shadow:0 0 0 100vmax #fff,0 1px 0 100vmax #1116140F;clip-path:inset(0 -100vmax -1px -100vmax)}
+.hdr.g{padding-bottom:14px}
+/* nota de ejercicio en el registro */
+.logl.open{border-bottom:0}
+.lognotew{padding-bottom:12px;border-bottom:1px solid var(--line)}
+.lognotew.last{border-bottom:0}
+.lognotew .lognote{margin:0}
+/* temporizador de ejercicios por tiempo */
+.go-t{height:44px;padding:0 14px 0 12px;border:0;border-radius:12px;background:var(--blue);color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.go-t.sq{width:44px;padding:0;justify-content:center}
+.tbar{position:relative;flex-grow:1;height:44px;border-radius:10px;background:var(--field);overflow:hidden;display:flex;align-items:center;justify-content:center;min-width:0}
+.tbar i{position:absolute;left:0;top:0;bottom:0;background:#1F5FB826}
+.tbar span{position:relative;font-family:var(--cond);font-weight:800;font-size:24px;font-variant-numeric:tabular-nums}
+.tbar small{position:relative;font-size:13px;font-weight:600;color:var(--ink2);margin-left:8px}
 /* bienvenida (Inicio 1–3 del lienzo) */
-.ob{position:fixed;inset:0;z-index:80;background:var(--bg);overflow-y:auto;overscroll-behavior:contain}
+.ob{position:fixed;inset:0;z-index:80;background:#FBFBFB;overflow-y:auto;overscroll-behavior:contain}
 .ob .in{max-width:430px;min-height:100%;margin:0 auto;display:flex;flex-direction:column;padding:20px max(16px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .ob .vp{overflow:hidden;margin:0 -16px;touch-action:pan-y}
 .ob .track{display:flex;width:300%;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
@@ -400,18 +416,18 @@ function anyTimer(){return !!(warm.running||restTick)}
 
 /* ---------- cabecera ---------- */
 function header(){
-  if(tab==='guia') return `<div class="top"><span class="eyebrow">Mirian · Bloque 1</span><button type="button" class="circ" data-close aria-label="Cerrar guía"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111614" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div><h1 style="margin-top:4px">Guía</h1>`;
+  if(tab==='guia') return `<div class="hdr g"><div class="top"><span class="eyebrow">Mirian · Bloque 1</span><button type="button" class="circ" data-close aria-label="Cerrar guía"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111614" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div><h1 style="margin-top:4px">Guía</h1></div>`;
   const bars=[1,2,3,4].map(i=>`<span class="${i===week?'on':weekComplete(i)?'done':''}"></span>`).join('');
   const lbl=[1,2,3,4].map(i=>`semana ${i} ${i===week?'en curso':weekComplete(i)?'completa':'pendiente'}`).join(', ');
   const menu=[1,2,3,4].map(i=>{const c=doneCount(i);const st=weekComplete(i)?`${CHECK('#2C8550',14,3.5)}Completada`:c?`${c} de 4 hechas`:'Sin empezar';
     return `<button type="button" class="${i===week?'on':''}" data-week="${i}"><span class="n">Semana ${i}</span><span class="s">${st}</span></button>`}).join('');
   const tabs=SESS.map(s=>{const d=getLog(week,s).done,on=s===tab;
     return `<button type="button" class="tab ${on?'on':d?'done':''}" data-tab="${s}" ${on?'aria-current="page"':''}>${ic(s)}<span class="lb">${NAMES[s]}${d&&!on?`<svg class="tk" aria-label="Hecha" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2C8550" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>`:''}</span></button>`}).join('');
-  return `<div class="top"><span class="eyebrow">Mirian · Bloque 1</span><button type="button" class="guidebtn" data-guide><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111614" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"></path><path d="M12 6.5v13"></path></svg>Guía</button></div>
+  return `<div class="hdr"><div class="top"><span class="eyebrow">Mirian · Bloque 1</span><button type="button" class="guidebtn" data-guide><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111614" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"></path><path d="M12 6.5v13"></path></svg>Guía</button></div>
   <div class="wsel"><button type="button" class="wbtn" id="wbtn" aria-haspopup="true" aria-expanded="${menuOpen}"><h1>Semana ${week}</h1><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111614" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
   <div class="wprog"><div class="bars" role="img" aria-label="${lbl}">${bars}</div><span class="t">${doneCount(week)} de 4 sesiones hechas</span></div>
   <div class="wmenu" id="wmenu" ${menuOpen?'':'hidden'}>${menu}</div></div>
-  <div class="tabs" role="tablist">${tabs}</div>`;
+  <div class="tabs" role="tablist">${tabs}</div></div>`;
 }
 function render(){
   if(tab!=='guia') log=getLog(week,tab);
@@ -483,6 +499,10 @@ function exRow(ex,label){
   return `<button type="button" class="row ${d?'isdone':''}" data-open="${ex.id}">${d?`<span class="donedot" aria-label="Hecho">${CHECK('#2C8550',14,3.5)}</span>`:`<span class="rnum">${label}</span>`}<span class="rmain"><span class="rname">${esc(ex.name)}</span><span class="rsub">${esc(sub)}</span></span>${log.notes[ex.id]?`<span class="noteico" aria-label="Tiene nota">${NOTEI}</span>`:''}<span class="chev">›</span></button>`;
 }
 let showVid=null,noteEdit=null;
+const PLAYW='<svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg>',PAUSEW='<svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><rect x="6" y="4.5" width="4" height="15" rx="1"></rect><rect x="14" y="4.5" width="4" height="15" rx="1"></rect></svg>';
+/* temporizador de series por tiempo (isométrico, Pallof): {id,k,secs,sides,side,left,end,running} */
+let hold=null,holdTick=null;
+
 const NOTEI='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111614B3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14v12l-4 4H5z"></path><path d="M15 20v-4h4"></path><path d="M8.5 9h7M8.5 12.5h4.5"></path></svg>';
 
 function exOpen(ex,label){
@@ -494,6 +514,11 @@ function exOpen(ex,label){
   for(let k=0;k<n;k++){const x=r[k]||{};
     if(x.done){sets+=`<div class="set"><span class="n">${k+1}</span>${ex.kg?`<span class="kgtxt">${x.kg!=null?x.kg+' kg':'–'}</span>`:''}<span class="vtxt">${x.v} ${esc(ex.unit)}</span><button type="button" class="chk on" data-undo="${k}" aria-label="Serie ${k+1} hecha, desmarcar">${CHECK('#2C8550')}</button></div>`}
     else if(k===cur){const kgv=x.kg!=null?x.kg:planKg(ex,k);const v=planV(ex,k);
+      if(ex.unit.startsWith('seg')){const h=hold&&hold.id===ex.id&&hold.k===k?hold:null;
+        if(h){const tot=h.secs,left=Math.max(0,h.running?(h.end-Date.now())/1000:h.left);
+          sets+=`<div class="set cur"><span class="n">${k+1}</span><div class="tbar" id="tbar"><i style="width:${(1-left/tot)*100}%"></i><span id="tclock">${fmt(Math.ceil(left))}</span>${h.sides>1?`<small id="tside">${h.side===1?'1.er lado':'2.º lado'}</small>`:''}</div><button type="button" class="go-t sq" data-hold="${k}" aria-label="${h.running?'Pausar':'Seguir'}">${h.running?PAUSEW:PLAYW}</button></div>`;continue}
+        const v=planV(ex,k);
+        sets+=`<div class="set cur"><span class="n">${k+1}</span><div class="stepper"><button type="button" data-step="-1" data-k="${k}" aria-label="5 segundos menos">−</button><span>${v} <span class="unit">seg</span></span><button type="button" data-step="1" data-k="${k}" aria-label="5 segundos más">+</button></div><button type="button" class="go-t" data-hold="${k}" aria-label="Empezar ${v} segundos">${PLAYW}Empezar</button></div>`;continue}
       sets+=`<div class="set cur"><span class="n">${k+1}</span>${ex.kg?`<label class="kgfield"><input id="kg-${tab}-${ex.id}" type="number" inputmode="decimal" step="0.5" min="0" value="${kgv!=null?kgv:''}" placeholder="–" aria-label="Peso serie ${k+1} en kg" data-kg="${k}"><span class="unit">kg</span></label>`:''}<div class="stepper"><button type="button" data-step="-1" data-k="${k}" aria-label="Una menos">−</button><span>${v} <span class="unit">${esc(ex.unit.split('/')[0])}</span></span><button type="button" data-step="1" data-k="${k}" aria-label="Una más">+</button></div><button type="button" class="chk" data-do="${k}" aria-label="Serie ${k+1} hecha">${CHECK('#7E8783')}</button></div>`}
     else{const kgv=planKg(ex,k);sets+=`<div class="set plan"><span class="n">${k+1}</span>${ex.kg?`<span class="kgtxt">${kgv!=null?kgv+' kg':'– kg'}</span>`:''}<span class="vtxt">${planV(ex,k)} ${esc(ex.unit)}</span><button type="button" class="chk" data-do="${k}" aria-label="Serie ${k+1} hecha">${CHECK('#7E8783')}</button></div>`}
   }
@@ -569,7 +594,7 @@ function registro(){
   if(tab==='A'||tab==='B'){
     const imp=improvements().map(x=>x.ex.id),l=exList(tab);
     h+=`<div class="list"><span class="eyebrow" style="padding-bottom:2px">Lo que hiciste</span><div class="loglist" id="logList">${l.map((ex,i)=>{const note=log.notes[ex.id];const open=logOpen===ex.id;
-      return `<button type="button" class="logl ${i===l.length-1&&!open?'last':''}" data-logl="${ex.id}" aria-expanded="${open}"><span class="lm"><span class="ln">${esc(ex.name)}</span><span class="lr">${esc(setsText(ex))}</span></span><span class="ic2">${imp.includes(ex.id)?UPI:''}${note?NOTEI.replace(/"20"/g,'"16"'):''}</span><span class="chev">${open?'⌄':'›'}</span></button>${open?`<div class="lognote ${note?'':'none'}">${note?esc(note):'Sin nota en este ejercicio.'}</div>`:''}`}).join('')}</div>
+      return `<button type="button" class="logl ${i===l.length-1&&!open?'last':''} ${open?'open':''}" data-logl="${ex.id}" aria-expanded="${open}"><span class="lm"><span class="ln">${esc(ex.name)}</span><span class="lr">${esc(setsText(ex))}</span></span><span class="ic2">${imp.includes(ex.id)?UPI:''}${note?NOTEI.replace(/"20"/g,'"16"'):''}</span><span class="chev">${open?'⌄':'›'}</span></button>${open?`<div class="lognotew ${i===l.length-1?'last':''}"><div class="lognote ${note?'':'none'}">${note?esc(note):'Sin nota en este ejercicio.'}</div></div>`:''}`}).join('')}</div>
     ${imp.length?`<span class="loglegend">${UPI}Mejor que la semana pasada</span>`:''}</div>`;
   }else{
     const body=run(tab,true);h+=body;
@@ -754,12 +779,12 @@ function installScreen(next){
 addEventListener('appinstalled',()=>{const a=document.querySelector('.inst .acts');if(a)a.innerHTML='<div class="done">Listo. Ábrela desde el icono <b>Entreno</b> de tu pantalla de inicio.</div>'});
 
 /* ---------- eventos ---------- */
-function setTab(t){tab=t;menuOpen=false;openId=null;showVid=null;editing=false;noteEdit=null;logOpen=null;S.set('tab',t);hideRest();render();window.scrollTo(0,0)}
+function setTab(t){holdStop();tab=t;menuOpen=false;openId=null;showVid=null;editing=false;noteEdit=null;logOpen=null;S.set('tab',t);hideRest();render();window.scrollTo(0,0)}
 function wireHeader(){
   const g=app.querySelector('[data-guide]');if(g)g.onclick=()=>{S.set('lastTab',tab);resetWarm();setTab('guia')};
   const x=app.querySelector('[data-close]');if(x)x.onclick=()=>setTab(S.get('lastTab','A'));
   const wb=document.getElementById('wbtn');if(wb)wb.onclick=e=>{e.stopPropagation();menuOpen=!menuOpen;wb.setAttribute('aria-expanded',menuOpen);document.getElementById('wmenu').hidden=!menuOpen};
-  app.querySelectorAll('[data-week]').forEach(b=>b.onclick=()=>{week=+b.dataset.week;menuOpen=false;openId=null;showVid=null;editing=false;noteEdit=null;S.set('week',week);hideRest();resetWarm();render()});
+  app.querySelectorAll('[data-week]').forEach(b=>b.onclick=()=>{holdStop();week=+b.dataset.week;menuOpen=false;openId=null;showVid=null;editing=false;noteEdit=null;S.set('week',week);hideRest();resetWarm();render()});
   app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{resetWarm();setTab(b.dataset.tab)});
 }
 document.addEventListener('click',e=>{if(menuOpen&&!e.target.closest('#wmenu')&&!e.target.closest('#wbtn')){menuOpen=false;const m=document.getElementById('wmenu'),b=document.getElementById('wbtn');if(m)m.hidden=true;if(b)b.setAttribute('aria-expanded','false')}});
@@ -787,6 +812,7 @@ function wireEx(){
     if(r[k].v==null)r[k].v=planV(ex,k);r[k].done=true;save();
     if(exDone(ex)){openId=null;showVid=null;noteEdit=null}
     rerenderEx()});
+  card.querySelectorAll('[data-hold]').forEach(b=>b.onclick=()=>{const k=+b.dataset.hold;if(hold&&hold.id===ex.id&&hold.k===k)holdToggle();else{hideRest();holdStart(ex,k);rerenderEx()}});
   card.querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>{const k=+b.dataset.undo;if(r[k])r[k].done=false;openId=ex.id;save();rerenderEx()});
   const rb=card.querySelector('[data-rest]');if(rb)rb.onclick=()=>{if(restFor===ex.id)hideRest();else startRest(+rb.dataset.rest,ex.name,ex.id)};paintRestBtn();
   const fh=card.querySelector('[data-fold]');const fold=()=>{openId=null;showVid=null;noteEdit=null;rerenderEx()};fh.onclick=fold;fh.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fold()}};
@@ -798,6 +824,25 @@ function wireEx(){
   ta.addEventListener('input',()=>{const v=ta.value;if(v.trim())log.notes[ex.id]=v;else delete log.notes[ex.id];save();updateSum()});
 }
 
+
+/* ---------- temporizador de series por tiempo ---------- */
+function holdPaint(){if(!hold)return;const c=document.getElementById('tclock'),b=document.getElementById('tbar');if(!c||!b)return;
+  const left=Math.max(0,hold.running?(hold.end-Date.now())/1000:hold.left);c.textContent=fmt(Math.ceil(left));b.querySelector('i').style.width=(1-left/hold.secs)*100+'%';
+  const sd=document.getElementById('tside');if(sd)sd.textContent=hold.side===1?'1.er lado':'2.º lado'}
+function holdStop(){if(holdTick)clearInterval(holdTick);holdTick=null;hold=null;if(!restTick&&!warm.running)awake(false)}
+function holdStart(ex,k){
+  const v=planV(ex,k),sides=ex.unit.includes('/lado')?2:1;
+  hold={id:ex.id,k,secs:v,sides,side:1,left:v,end:Date.now()+v*1000,running:true};beep(1);awake(true);
+  if(holdTick)clearInterval(holdTick);
+  holdTick=setInterval(()=>{if(!hold||!hold.running)return;const left=(hold.end-Date.now())/1000;
+    if(left<=0){if(hold.side<hold.sides){hold.side++;hold.end=Date.now()+hold.secs*1000;beep(2);holdPaint();return}
+      const h=hold;holdStop();beep(3);
+      const lg=getLog(week,tab);const sv=log;log=lg;const exo=exList(tab).find(e=>e.id===h.id);const r=rows(exo);r[h.k]=r[h.k]||{};r[h.k].v=h.secs;r[h.k].done=true;save();
+      if(exDone(exo)){openId=null;showVid=null;noteEdit=null}else startRest(exo.rest,exo.name,exo.id);
+      if(!(log.done&&!editing))rerenderEx();return}
+    holdPaint()},200);
+}
+function holdToggle(){if(!hold)return;if(hold.running){hold.left=Math.max(0,(hold.end-Date.now())/1000);hold.running=false}else{hold.end=Date.now()+hold.left*1000;hold.running=true}rerenderEx()}
 /* ---------- elíptica ---------- */
 const warm={running:false,end:0,left:900};let warmTick=null;
 function resetWarm(){if(warmTick){clearInterval(warmTick);warmTick=null}warm.running=false;warm.left=900;if(!restTick)awake(false);updateBar()}
